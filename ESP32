@@ -1,0 +1,147 @@
+#include <BluetoothSerial.h>
+BluetoothSerial SerialBT;
+
+int relay1 = 15; // motor1
+int relay2 = 2;  // motor1
+int relay3 = 4;  // motor2
+int relay4 = 5;  // motor2
+
+void setup() {
+  Serial.begin(115200);
+  SerialBT.begin("NeoMatrix"); // Bluetooth device name
+
+  pinMode(relay1, OUTPUT);
+  pinMode(relay2, OUTPUT);
+  pinMode(relay3, OUTPUT);
+  pinMode(relay4, OUTPUT);
+}
+
+void loop() {
+  while (SerialBT.available()) {
+    char receivedChar = SerialBT.read();
+    Serial.println("Received: " + String(receivedChar));
+
+    // Parse and handle the received data
+    handleBluetoothData(receivedChar);
+  }
+
+  // Your other tasks here
+}
+
+void handleBluetoothData(char data) {
+  // Perform actions based on the received command
+  Serial.print("Incoming data is ");
+  Serial.println(data);
+
+  switch (data) {
+    case 'F':
+      moveForward();
+      break;
+    case 'B':
+      moveBackward();
+      break;
+    case 'L':
+      turnLeft();
+      break;
+    case 'R':
+      turnRight();
+      break;
+    case 'G':
+      forwardLeft();
+      break;
+    case 'I':
+      forwardRight();
+      break;
+    case 'H':
+      backwardLeft();
+      break;
+    case 'J':
+      backwardRight();
+      break;
+    case 'S':
+      stopMotors();
+      Serial.println("Stop command received");
+      break;
+    default:
+      stopMotors();
+      Serial.println("Unknown command received");
+      break;
+  }
+}
+
+
+void moveBackward() {
+  digitalWrite(relay1, LOW);
+  digitalWrite(relay2, HIGH);
+  digitalWrite(relay3, LOW);
+  digitalWrite(relay4, HIGH);
+  Serial.println("The bot is going backward");
+}
+
+void moveForward() {
+  digitalWrite(relay1, HIGH);
+  digitalWrite(relay2, LOW);
+  digitalWrite(relay3, HIGH);
+  digitalWrite(relay4, LOW);
+  Serial.println("The bot is going forward");
+}
+
+void stopMotors() {
+  digitalWrite(relay1, HIGH);
+  digitalWrite(relay2, HIGH);
+  digitalWrite(relay3, HIGH);
+  digitalWrite(relay4, HIGH);
+  Serial.println("The bot is stopped");
+}
+
+void turnLeft() {
+  digitalWrite(relay1, LOW);
+  digitalWrite(relay2, HIGH);
+  digitalWrite(relay3, HIGH);
+  digitalWrite(relay4, LOW);
+  Serial.println("The bot is going Left");
+}
+
+void turnRight() {
+  digitalWrite(relay1, HIGH);
+  digitalWrite(relay2, LOW);
+  digitalWrite(relay3, LOW);
+  digitalWrite(relay4, HIGH);
+  Serial.println("The bot is going Right");
+}
+
+void forwardRight()
+{
+  digitalWrite(relay1, LOW);
+  digitalWrite(relay2, LOW);
+  digitalWrite(relay3, LOW);
+  digitalWrite(relay4, HIGH);
+  Serial.println("The bot is going forward-left");
+}
+
+void forwardLeft()
+{
+  digitalWrite(relay1, LOW);
+  digitalWrite(relay2, HIGH);
+  digitalWrite(relay3, LOW);
+  digitalWrite(relay4, LOW);
+  Serial.println("The bot is going forward-right");
+}
+
+void backwardLeft()
+{
+  digitalWrite(relay1, LOW);
+  digitalWrite(relay2, LOW);
+  digitalWrite(relay3, HIGH);
+  digitalWrite(relay4, LOW);
+  Serial.println("The bot is going backward-left");
+}
+
+void backwardRight()
+{
+  digitalWrite(relay1, HIGH);
+  digitalWrite(relay2, LOW);
+  digitalWrite(relay3, LOW);
+  digitalWrite(relay4, LOW);
+  Serial.println("The bot is going backward-right");
+}
